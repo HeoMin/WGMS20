@@ -5,47 +5,42 @@ Created on 2012. 12. 21.
 '''
 
 from optparse import OptionParser
-import sys
-import WarpperPkg.ftpwrap
 import ConfigParser
-
-option0 = { 'name' : ('-g', '--game'),   'help' : 'game title'}
-option1 = { 'name' : ('-t', '--type'),      'help' : 'build type'}
-option2 = { 'name' : ('-v', '--version'),   'help' : 'build version'}
-
-options = [option0, option1, option2]
+import WarpperPkg.ftpwrap
+import WarpperPkg.logwrap
 
 def main(opt, arg):
-    if opt.game == None:
-        print "Input game title"
-        
-    if opt.type == None:
-        print "Input build type"
-    
-    if opt.version == None:
-        print "Input build version"
-        
-    print 'debugging...'
-    print 'Options = %s' % opt
-    print 'Arguments = %s' % arg
-    
-    config = ConfigParser.RawConfigParser()
-    config.read('../config/ftpConfig.ini')    
-    
-    ftp = WarpperPkg.ftpwrap
-    ftp.connect(config.get(opt.game, 'FtpUser'), config.get(opt.game, 'FtpPasswd'), config.get(opt.game, 'FtpUrl'), config.get(opt.game, 'FtpPort'))
-    dirList = ftp.__get_dir_list(config.get(opt.game, 'FtpRoot'))
-    print dirList
-    ftp.close()
-    pass
+	logPrint = WarpperPkg.logwrap
+	
+	if opt.game == None:
+		logPrint.info('info', 'log.txt')
+		return
+	if opt.type == None:
+		print "Input build type"
+		return
+	if opt.version == None:
+		print "Input build version"
+		return
+	
+	print 'debugging...'
+	logPrint.info('debug', 'debug.txt')
+	config = ConfigParser.RawConfigParser()
+	config.read('../config/ftpConfig.ini')
+	
+	ftp = WarpperPkg.ftpwrap
+	ftp.connect(config.get(opt.game, 'FtpUser'), config.get(opt.game, 'FtpPasswd'), config.get(opt.game, 'FtpUrl'), config.get(opt.game, 'FtpPort'))
+	dirList = ftp.__get_dir_list(config.get(opt.game, 'FtpRoot'))
+	print dirList
+	ftp.close()
+	pass
 
 if __name__ == '__main__':
-    parser = OptionParser()
-    for option in options:
-        param = option['name']
-        del option['name']
-        parser.add_option(*param, **option)
-        
-    opt, arg = parser.parse_args()
-    sys.argv[:] = arg
-    main(opt, arg)
+	parser = OptionParser()
+	
+	parser.add_option( '-g', '--game', help='game title')
+	parser.add_option( '-t', '--type', help='build type')
+	parser.add_option( '-v', '--version', help='build version')
+	
+	opt, arg = parser.parse_args()
+	
+	main(opt, arg)
