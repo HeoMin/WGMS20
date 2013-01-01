@@ -7,13 +7,11 @@ Created on 2012. 12. 21.
 from optparse import OptionParser
 import ConfigParser
 import WarpperPkg.ftpwrap
-import WarpperPkg.logwrap
+import logging
 
 def main(opt, arg):
-	logPrint = WarpperPkg.logwrap
-	
 	if opt.game == None:
-		logPrint.info('info', 'log.txt')
+		logging.info("Input game title")
 		return
 	if opt.type == None:
 		print "Input build type"
@@ -23,7 +21,8 @@ def main(opt, arg):
 		return
 	
 	print 'debugging...'
-	logPrint.info('debug', 'debug.txt')
+	logging.info('Options = %s' % opt)
+	
 	config = ConfigParser.RawConfigParser()
 	config.read('../config/ftpConfig.ini')
 	
@@ -40,7 +39,20 @@ if __name__ == '__main__':
 	parser.add_option( '-g', '--game', help='game title')
 	parser.add_option( '-t', '--type', help='build type')
 	parser.add_option( '-v', '--version', help='build version')
+	parser.add_option( '-l', '--logging-level', help='Logging level')
+	parser.add_option( '-f', '--logging-file', help='Logging file name')
+		
+	LOGGING_LEVELS = {'critical': logging.CRITICAL,
+                      'error': logging.ERROR,
+                      'warning': logging.WARNING,
+                      'info': logging.INFO,
+                      'debug': logging.DEBUG}
 	
 	opt, arg = parser.parse_args()
+	
+	logging_level = LOGGING_LEVELS.get(opt.logging_level, logging.NOTSET)
+	logging.basicConfig(level=logging_level, filename=opt.logging_file,
+                      format='%(asctime)s %(levelname)s: %(message)s',
+                      datefmt='%Y-%m-%d %H:%M:%S')
 	
 	main(opt, arg)
