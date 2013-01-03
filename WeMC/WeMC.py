@@ -20,18 +20,25 @@ def main(opt, arg):
 		logging.info("Input build version")
 		return
 	
-	print 'debugging...'
-	logging.info('Options = %s' % opt)
-	
+	logging.debug('Options = %s' % opt)
+		
 	config = ConfigParser.RawConfigParser()
 	config.read('../config/ftpConfig.ini')
 	
 	ftp = WarpperPkg.ftpwrap
 	ftp.connect(config.get(opt.game, 'FtpUser'), config.get(opt.game, 'FtpPasswd'), config.get(opt.game, 'FtpUrl'), config.get(opt.game, 'FtpPort'))
 	ftp.cwd(config.get(opt.game, 'FtpRoot'))
-	dirList = ftp.__get_dir_list()
-	print dirList
+	
+	#dirList = ftp.__get_dir_list()
+	#print dirList
+	print("========== Start Download ==========")
 	ftp.download(opt.version)
+	print("========== finished Download ==========")
+	ftp.close()
+	
+	ftp.connect('Min Heo', 'qlalf', 'localhost', 21)
+	print ftp.pwd()
+	ftp.upload(opt.version)
 	ftp.close()
 	pass
 

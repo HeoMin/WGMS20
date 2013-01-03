@@ -7,10 +7,11 @@ Created on 2012. 12. 21.
 import ftplib
 import os
 import logging
+import traceback
 
 ftp = ftplib.FTP()
 
-def connect(fUser, fPass, fHost, fPort=22):
+def connect(fUser, fPass, fHost, fPort=21):
     ftp.connect(fHost, fPort)
     ftp.login(fUser, fPass)
     
@@ -20,7 +21,7 @@ def close():
 def cwd(path):
     ftp.cwd(path)
     
-def pwd():		
+def pwd():
 	return ftp.pwd()
 
 def __get_dir_list():
@@ -42,6 +43,7 @@ def download(fname):
         print('download - ' + curpath + fname)
         f = open(fname, 'wb')
         ftp.retrbinary('RETR ' + fname, f.write)
+        f.close()
     else:
         current = os.getcwd()
         current_ftp = pwd()
@@ -57,3 +59,42 @@ def download(fname):
             
         os.chdir(current)
         ftp.cwd(current_ftp)
+
+def upload(fname):
+	'''
+	print ftp.getwelcome()
+	
+	try:
+		try:
+			logging.info("currently in : " + ftp.pwd())
+			print os.getcwd()
+			f = open(fname, "rb")
+			print "Uploading..."
+			ftp.storbinary('STOR ' + fname, f)
+			f.close()
+		finally:
+			print "Quitting..."
+	except:
+		traceback.print_exe()
+	'''
+	if False == os.path.isdir(fname):
+		curpath = pwd()
+		print('upload - ' + curpath + fname)
+		f = open(fname, 'rb')
+		ftp.retrbinary('STOR ' + fname, f)
+		f.close()
+	else:
+		current = os.getcwd()
+		current_ftp = pwd()
+			
+		if False == __is_file(fname):
+			ftp.mkd('min1')
+		os.chdir(fname)
+		ftp.cwd(fname)
+		
+		entries = os.listdir(fname)
+		for entry in entries:
+			upload(entry)
+			
+		os.chdir(current)
+		ftp.cwd(current_ftp)
