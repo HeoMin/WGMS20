@@ -17,13 +17,19 @@ def connect(fUser, fPass, fHost, fPort=22):
 def close():
     ftp.close()
     
-def __get_dir_list(fRoot):
-    return ftp.nlst(fRoot)
+def cwd(path):
+    ftp.cwd(path)
+    
+def pwd():		
+	return ftp.pwd()
+
+def __get_dir_list():
+    return ftp.nlst()
 
 def __is_file(filename):
-    current = ftp.pwd()
+    current = pwd()
     try:
-        ftp.cwd(current)
+        ftp.cwd(filename)
     except:
         ftp.cwd(current)
         return True
@@ -32,22 +38,20 @@ def __is_file(filename):
 
 def download(fname):
     if __is_file(fname):
-        curpath = ftp.pwd()
+        curpath = pwd()
         print('download - ' + curpath + fname)
         f = open(fname, 'wb')
         ftp.retrbinary('RETR ' + fname, f.write)
     else:
         current = os.getcwd()
-        logging.debug('current : ' + current)
-        current_ftp = ftp.pwd()
-        logging.debug('current_ftp : ' + current_ftp)
-    
+        current_ftp = pwd()
+            
         if False == os.path.isdir(fname):
             os.mkdir(fname)
         os.chdir(fname)
-        ftp.cwd("/home")
+        ftp.cwd(fname)
         
-        entries = ftp.nlst()
+        entries = __get_dir_list()
         for entry in entries:
             download(entry)
             

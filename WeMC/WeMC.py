@@ -28,7 +28,8 @@ def main(opt, arg):
 	
 	ftp = WarpperPkg.ftpwrap
 	ftp.connect(config.get(opt.game, 'FtpUser'), config.get(opt.game, 'FtpPasswd'), config.get(opt.game, 'FtpUrl'), config.get(opt.game, 'FtpPort'))
-	dirList = ftp.__get_dir_list(config.get(opt.game, 'FtpRoot'))
+	ftp.cwd(config.get(opt.game, 'FtpRoot'))
+	dirList = ftp.__get_dir_list()
 	print dirList
 	ftp.download(opt.version)
 	ftp.close()
