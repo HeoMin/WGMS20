@@ -14,10 +14,10 @@ def main(opt, arg):
 		logging.info("Input game title")
 		return
 	if opt.type == None:
-		print "Input build type"
+		logging.info("Input build type")
 		return
 	if opt.version == None:
-		print "Input build version"
+		logging.info("Input build version")
 		return
 	
 	print 'debugging...'
@@ -30,6 +30,7 @@ def main(opt, arg):
 	ftp.connect(config.get(opt.game, 'FtpUser'), config.get(opt.game, 'FtpPasswd'), config.get(opt.game, 'FtpUrl'), config.get(opt.game, 'FtpPort'))
 	dirList = ftp.__get_dir_list(config.get(opt.game, 'FtpRoot'))
 	print dirList
+	ftp.download(opt.version)
 	ftp.close()
 	pass
 
@@ -52,7 +53,7 @@ if __name__ == '__main__':
 	
 	logging_level = LOGGING_LEVELS.get(opt.logging_level, logging.NOTSET)
 	logging.basicConfig(level=logging_level, filename=opt.logging_file,
-                      format='%(asctime)s %(levelname)s: %(message)s',
+                      format='%(asctime)s [%(levelname)s]: %(message)s',
                       datefmt='%Y-%m-%d %H:%M:%S')
 	
 	main(opt, arg)
