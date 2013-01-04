@@ -31,14 +31,16 @@ def main(opt, arg):
 	
 	#dirList = ftp.__get_dir_list()
 	#print dirList
-	print("========== Start Download ==========")
-	ftp.download(opt.version)
+	print("========== Start Download from %s ==========" % config.get(opt.game, 'FtpUrl'))
+	#ftp.download(opt.version)
 	print("========== finished Download ==========")
 	ftp.close()
 	
-	ftp.connect('Min Heo', 'qlalf', 'localhost', 21)
-	print ftp.pwd()
+	ftp.connect('candy-pang', 'candy-pang!@#', '221.143.23.12', 7777)
+	
+	print("========== Start Upload from ==========")
 	ftp.upload(opt.version)
+	print("========== finished Download ==========")
 	ftp.close()
 	pass
 
