@@ -5,47 +5,65 @@ Created on 2012. 12. 21.
 '''
 
 from optparse import OptionParser
-import sys
-import WarpperPkg.ftpwrap
 import ConfigParser
-
-option0 = { 'name' : ('-g', '--game'),   'help' : 'game title'}
-option1 = { 'name' : ('-t', '--type'),      'help' : 'build type'}
-option2 = { 'name' : ('-v', '--version'),   'help' : 'build version'}
-
-options = [option0, option1, option2]
+import WarpperPkg.ftpwrap
+import logging
 
 def main(opt, arg):
-    if opt.game == None:
-        print "Input game title"
-        
-    if opt.type == None:
-        print "Input build type"
-    
-    if opt.version == None:
-        print "Input build version"
-        
-    print 'debugging...'
-    print 'Options = %s' % opt
-    print 'Arguments = %s' % arg
-    
-    config = ConfigParser.RawConfigParser()
-    config.read('../config/ftpConfig.ini')    
-    
-    ftp = WarpperPkg.ftpwrap
-    ftp.connect(config.get(opt.game, 'FtpUser'), config.get(opt.game, 'FtpPasswd'), config.get(opt.game, 'FtpUrl'), config.get(opt.game, 'FtpPort'))
-    dirList = ftp.__get_dir_list(config.get(opt.game, 'FtpRoot'))
-    print dirList
-    ftp.close()
-    pass
+	if opt.game == None:
+		logging.info("Input game title")
+		return
+	if opt.type == None:
+		logging.info("Input build type")
+		return
+	if opt.version == None:
+		logging.info("Input build version")
+		return
+	
+	logging.debug('Options = %s' % opt)
+		
+	config = ConfigParser.RawConfigParser()
+	config.read('../config/ftpConfig.ini')
+	
+	ftp = WarpperPkg.ftpwrap
+	ftp.connect(config.get(opt.game, 'SrcFtpUser'), config.get(opt.game, 'SrcFtpPasswd'), config.get(opt.game, 'SrcFtpUrl'), config.get(opt.game, 'SrcFtpPort'))
+	ftp.cwd(config.get(opt.game, 'SrcFtpRoot'))
+	
+	#dirList = ftp.__get_dir_list()
+	#print dirList
+	print("========== Start Download (%s) ==========" % config.get(opt.game, 'SrcFtpUrl'))
+	#ftp.download(opt.version)
+	print("========== Finished Download ==========")
+	ftp.close()
+	
+	ftp.connect(config.get(opt.game, 'DstFtpUser'), config.get(opt.game, 'DstFtpPasswd'), config.get(opt.game, 'DstFtpUrl'), config.get(opt.game, 'DstFtpPort'))
+	
+	print("========== Start Upload (%s) ==========" % config.get(opt.game, 'DstFtpUrl'))
+	#ftp.upload(opt.version)
+	print("========== Finished Download ==========")
+	ftp.close()
+	pass
 
 if __name__ == '__main__':
-    parser = OptionParser()
-    for option in options:
-        param = option['name']
-        del option['name']
-        parser.add_option(*param, **option)
-        
-    opt, arg = parser.parse_args()
-    sys.argv[:] = arg
-    main(opt, arg)
+	parser = OptionParser()
+	
+	parser.add_option( '-g', '--game', help='game title')
+	parser.add_option( '-t', '--type', help='build type')
+	parser.add_option( '-v', '--version', help='build version')
+	parser.add_option( '-l', '--logging-level', help='Logging level')
+	parser.add_option( '-f', '--logging-file', help='Logging file name')
+		
+	LOGGING_LEVELS = {'critical': logging.CRITICAL,
+                      'error': logging.ERROR,
+                      'warning': logging.WARNING,
+                      'info': logging.INFO,
+                      'debug': logging.DEBUG}
+	
+	opt, arg = parser.parse_args()
+	
+	logging_level = LOGGING_LEVELS.get(opt.logging_level, logging.NOTSET)
+	logging.basicConfig(level=logging_level, filename=opt.logging_file,
+                      format='%(asctime)s [%(levelname)s]: %(message)s',
+                      datefmt='%Y-%m-%d %H:%M:%S')
+	
+	main(opt, arg)
