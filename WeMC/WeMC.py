@@ -6,7 +6,8 @@ Created on 2012. 12. 21.
 
 from optparse import OptionParser
 import ConfigParser
-import WarpperPkg.ftpwrap
+import WrapperPkg.ftpwrap
+import WrapperPkg.svnwrap
 import logging
 
 def main(opt, arg):
@@ -23,25 +24,32 @@ def main(opt, arg):
 	logging.debug('Options = %s' % opt)
 		
 	config = ConfigParser.RawConfigParser()
-	config.read('../config/ftpConfig.ini')
+	ftpConfig = config.read('../config/ftpConfig.ini')
+	config.read('../config/McConfig.ini')
 	
-	ftp = WarpperPkg.ftpwrap
-	ftp.connect(config.get(opt.game, 'SrcFtpUser'), config.get(opt.game, 'SrcFtpPasswd'), config.get(opt.game, 'SrcFtpUrl'), config.get(opt.game, 'SrcFtpPort'))
-	ftp.cwd(config.get(opt.game, 'SrcFtpRoot'))
+	ftp = WrapperPkg.ftpwrap
+	svn = WrapperPkg.svnwrap
+	
+	#ftp.connect(config.get(opt.game, 'SrcFtpUser'), config.get(opt.game, 'SrcFtpPasswd'), config.get(opt.game, 'SrcFtpUrl'), config.get(opt.game, 'SrcFtpPort'))
+	#ftp.cwd(config.get(opt.game, 'SrcFtpRoot'))
 	
 	#dirList = ftp.__get_dir_list()
 	#print dirList
 	print("========== Start Download (%s) ==========" % config.get(opt.game, 'SrcFtpUrl'))
-	#ftp.download(opt.version)
-	print("========== Finished Download ==========")
-	ftp.close()
 	
-	ftp.connect(config.get(opt.game, 'DstFtpUser'), config.get(opt.game, 'DstFtpPasswd'), config.get(opt.game, 'DstFtpUrl'), config.get(opt.game, 'DstFtpPort'))
+	#ftp.download(opt.version)
+	#print("========== Finished Download ==========")
+	#ftp.close()
+	
+	#ftp.connect(config.get(opt.game, 'DstFtpUser'), config.get(opt.game, 'DstFtpPasswd'), config.get(opt.game, 'DstFtpUrl'), config.get(opt.game, 'DstFtpPort'))
 	
 	print("========== Start Upload (%s) ==========" % config.get(opt.game, 'DstFtpUrl'))
 	#ftp.upload(opt.version)
 	print("========== Finished Download ==========")
-	ftp.close()
+	#ftp.close()
+	
+	#svn.importSVN(opt.version, config.get('SVN', 'uri'))
+	#svn.commit(opt.version, config.get('SVN', 'uri'))
 	pass
 
 if __name__ == '__main__':
