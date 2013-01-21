@@ -9,6 +9,7 @@ import ConfigParser
 import WrapperPkg.ftpwrap
 import WrapperPkg.svnwrap
 import logging
+import os
 
 def main(opt, arg):
 	if opt.game == None:
@@ -48,8 +49,9 @@ def main(opt, arg):
 	print("========== Finished Download ==========")
 	#ftp.close()
 	
-	#svn.importSVN(opt.version, config.get('SVN', 'uri'))
+	svn.importSVN(opt.version, config.get('SVN', 'uri'))
 	#svn.commit(opt.version, config.get('SVN', 'uri'))
+	svn.add("D:\\svn\\repos\\WGMS20\\sacheonpang")
 	pass
 
 if __name__ == '__main__':
