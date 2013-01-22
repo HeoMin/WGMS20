@@ -9,12 +9,24 @@ import pysvn
 import logging
 import os
 
+## callback function
 def ssl_server_trust_prompt(trust_dict):
     return True, trust_dict['failures'], True
 
+def get_login( realm, username, may_save ):
+    retcode = True
+    username = "nike1710@gmail.com"
+    password = "Hb6WN6dZ4Sv5"
+    save = True
+    return retcode, username, password, save
+
+
+
 client = pysvn.Client()
+client.callback_get_login = get_login
 client.callback_ssl_server_trust_prompt = ssl_server_trust_prompt
 
+## wrapper function
 def importSVN(fname, uri):
     try:
         absPath = os.path.abspath(fname)
@@ -25,26 +37,27 @@ def importSVN(fname, uri):
     return True
 
 
-def add(fname):
+def add(repoDir):
     try:
-        tStatus = client.status(fname,recurse=True)
+        tStatus = client.status(repoDir,recurse=True)
         for item in tStatus:
-            if os.path.isdir(item.path):
-                continue
             if item.text_status == pysvn.wc_status_kind.unversioned:
-                logging.debug("addItem: %s , status: %s" % (item.path, item.text_status) )
-                client.add(item.path)        
+                client.add(item.path)
+                logging.debug("Add item: %s , status: %s" % (item.path, item.text_status) )
     except:
-        logging.info("Can not add item: %s" % fname)
-
-def commit(fname, uri):
+        logging.info("Can not add item: %s" % repoDir)
+        
+def commit(repoDir, comment):
     try:
-        absPath = os.path.abspath(fname)
-        add("sacheonpang")
-        call(['../bin/svn.exe', 'commit', '-m', fname, "D:\\svn\\repos\\WGMS20\\"])
+        tStatus = client.status(repoDir,recurse=True)
+        for item in tStatus:
+            if item.text_status == pysvn.wc_status_kind.modified or item.text_status == pysvn.wc_status_kind.added:
+                client.checkin(repoDir, "Build Version: %s" % comment)
+                logging.debug("Commit item: %s , status: %s" % (item.path, item.text_status) )
     except:
-        logging.debug("process execute error: source commit error")
-        return False
-    return True
+        logging.info("Can not commit item: %s" % repoDir)
 
-
+def delete(repoDir):
+    tStatus = client.status(repoDir,recurse=True)
+    for item in tStatus:
+        logging.debug("Delete item: %s , status: %s" % (item.path, item.text_status) )
