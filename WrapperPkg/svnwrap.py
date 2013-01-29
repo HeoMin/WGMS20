@@ -43,7 +43,7 @@ def add(repoDir):
         for item in tStatus:
             if item.text_status == pysvn.wc_status_kind.unversioned:
                 client.add(item.path)
-                logging.debug("Add item: %s , status: %s" % (item.path, item.text_status) )
+                logging.info("Add item: %s , status: %s" % (item.path, item.text_status) )
     except:
         logging.info("Can not add item: %s" % repoDir)
         
@@ -53,7 +53,7 @@ def commit(repoDir, comment):
         for item in tStatus:
             if item.text_status == pysvn.wc_status_kind.modified or item.text_status == pysvn.wc_status_kind.added:
                 client.checkin(repoDir, "Build Version: %s" % comment)
-                logging.debug("Commit item: %s , status: %s" % (item.path, item.text_status) )
+                logging.info("Commit item: %s , status: %s" % (item.path, item.text_status) )
     except:
         logging.info("Can not commit item: %s" % repoDir)
 

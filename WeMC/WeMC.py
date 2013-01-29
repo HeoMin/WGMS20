@@ -25,8 +25,8 @@ def main(opt, arg):
 	logging.debug('Options = %s' % opt)
 		
 	config = ConfigParser.RawConfigParser()
-	ftpConfig = config.read('../config/ftpConfig.ini')
-	config.read('../config/McConfig.ini')
+	config.read('../config/ftpConfig.ini')
+	config.read('../config/svnConfig.ini')
 	
 	ftp = WrapperPkg.ftpwrap
 	svn = WrapperPkg.svnwrap
