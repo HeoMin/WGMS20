@@ -60,4 +60,6 @@ def commit(repoDir, comment):
 def delete(repoDir):
     tStatus = client.status(repoDir,recurse=True)
     for item in tStatus:
-        logging.debug("Delete item: %s , status: %s" % (item.path, item.text_status) )
+        if item.text_status == pysvn.wc_status_kind.deleted:
+            client.remove(item.path)
+            logging.info("Delete item: %s , status: %s" % (item.path, item.text_status) )

@@ -11,6 +11,7 @@ import WrapperPkg.svnwrap
 import logging
 import os
 
+
 def main(opt, arg):
 	if opt.game == None:
 		logging.info("Input game title")
@@ -51,7 +52,7 @@ def main(opt, arg):
 	
 	#svn.importSVN(opt.version, config.get('SVN', 'uri'))
 	#svn.commit(opt.version, config.get('SVN', 'uri'))
-	svn.delete("D:\\svn\\repos\\WGMS20\\sacheonpang", opt.version)
+	#svn.delete("D:\\svn\\repos\\WGMS20\\sacheonpang")
 	pass
 
 if __name__ == '__main__':
