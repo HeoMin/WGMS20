@@ -11,6 +11,11 @@ import WrapperPkg.svnwrap
 import logging
 import os
 
+def GetStepFunc():
+	return {
+			
+		}
+
 
 def main(opt, arg):
 	if opt.game == None:
@@ -50,6 +55,7 @@ def main(opt, arg):
 	print("========== Finished Download ==========")
 	#ftp.close()
 	
+	svn.svnLogin(config.get(opt.game, 'user'), config.get(opt.game, 'passwd'))
 	#svn.importSVN(opt.version, config.get('SVN', 'uri'))
 	#svn.commit(opt.version, config.get('SVN', 'uri'))
 	#svn.delete("D:\\svn\\repos\\WGMS20\\sacheonpang")

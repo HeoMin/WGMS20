@@ -13,26 +13,34 @@ import os
 def ssl_server_trust_prompt(trust_dict):
     return True, trust_dict['failures'], True
 
-def get_login( realm, username, may_save ):
-    retcode = True
-    username = "nike1710@gmail.com"
-    password = "Hb6WN6dZ4Sv5"
-    save = True
-    return retcode, username, password, save
-
-
-
 client = pysvn.Client()
-client.callback_get_login = get_login
 client.callback_ssl_server_trust_prompt = ssl_server_trust_prompt
 
 ## wrapper function
+def svnLogin(user="", passwd=""):
+    def get_login(realm, username, may_save):
+        retcode = True
+        username = user
+        password = passwd
+        save = True
+        return retcode, username, password, save
+    
+    try:
+        client.callback_get_login = get_login
+        logging.info("SVN login success: %s" % user)
+    except:
+        logging.error("SVN login error: %s" % user)
+        return False
+    return True
+    
+    
+    
 def importSVN(fname, uri):
     try:
         absPath = os.path.abspath(fname)
         call(['../bin/svn.exe', 'import', '-m', 'import SVN', absPath, uri, '--username', 'nike1710@gmail.com', '--password', 'Hb6WN6dZ4Sv5']) 
     except:
-        logging.debug("process execute error")
+        logging.error("process execute error")
         return False
     return True
 
@@ -45,7 +53,7 @@ def add(repoDir):
                 client.add(item.path)
                 logging.info("Add item: %s , status: %s" % (item.path, item.text_status) )
     except:
-        logging.info("Can not add item: %s" % repoDir)
+        logging.error("Can not add item: %s" % repoDir)
         
 def commit(repoDir, comment):
     try:
@@ -55,7 +63,7 @@ def commit(repoDir, comment):
                 client.checkin(repoDir, "Build Version: %s" % comment)
                 logging.info("Commit item: %s , status: %s" % (item.path, item.text_status) )
     except:
-        logging.info("Can not commit item: %s" % repoDir)
+        logging.error("Can not commit item: %s" % repoDir)
 
 def delete(repoDir):
     tStatus = client.status(repoDir,recurse=True)
