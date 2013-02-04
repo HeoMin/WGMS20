@@ -31,8 +31,7 @@ def svnLogin(user="", passwd=""):
     except:
         logging.error("SVN login error: %s" % user)
         return False
-    return True
-    
+    return True    
     
     
 def importSVN(fname, uri):

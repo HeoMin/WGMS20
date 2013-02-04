@@ -6,26 +6,27 @@ Created on 2012. 12. 21.
 
 from optparse import OptionParser
 import ConfigParser
-import WrapperPkg.ftpwrap
-import WrapperPkg.svnwrap
+from StepFunction import *
 import logging
 import os
 
-def GetStepFunc():
-	return {
-			
-		}
+def GetStepFunc(opt, config):
+	return (
+		{'fn':'DownloadBuild', 'param':[opt.game, opt.version, config]},
+		{'fn':'ConnetSvn', 'param':[]},
+		{'fn':'CommitSrc', 'param':[]}
+		)
 
 
-def main(opt, arg):
+def Main(opt, arg):
 	if opt.game == None:
-		logging.info("Input game title")
+		logging.error("Input game title")
 		return
 	if opt.type == None:
-		logging.info("Input build type")
+		logging.error("Input build type")
 		return
 	if opt.version == None:
-		logging.info("Input build version")
+		logging.error("Input build version")
 		return
 	
 	logging.debug('Options = %s' % opt)
@@ -34,28 +35,17 @@ def main(opt, arg):
 	config.read('../config/ftpConfig.ini')
 	config.read('../config/svnConfig.ini')
 	
-	ftp = WrapperPkg.ftpwrap
-	svn = WrapperPkg.svnwrap
+	stepFunc = GetStepFunc(opt, config)
 	
-	#ftp.connect(config.get(opt.game, 'SrcFtpUser'), config.get(opt.game, 'SrcFtpPasswd'), config.get(opt.game, 'SrcFtpUrl'), config.get(opt.game, 'SrcFtpPort'))
-	#ftp.cwd(config.get(opt.game, 'SrcFtpRoot'))
+	for item in stepFunc:
+		print item['fn'], item['param']
+
+	#svn = WrapperPkg.svnwrap
 	
 	#dirList = ftp.__get_dir_list()
 	#print dirList
-	print("========== Start Download (%s) ==========" % config.get(opt.game, 'SrcFtpUrl'))
 	
-	#ftp.download(opt.version)
-	#print("========== Finished Download ==========")
-	#ftp.close()
-	
-	#ftp.connect(config.get(opt.game, 'DstFtpUser'), config.get(opt.game, 'DstFtpPasswd'), config.get(opt.game, 'DstFtpUrl'), config.get(opt.game, 'DstFtpPort'))
-	
-	print("========== Start Upload (%s) ==========" % config.get(opt.game, 'DstFtpUrl'))
-	#ftp.upload(opt.version)
-	print("========== Finished Download ==========")
-	#ftp.close()
-	
-	svn.svnLogin(config.get(opt.game, 'user'), config.get(opt.game, 'passwd'))
+	#svn.svnLogin(config.get(opt.game, 'user'), config.get(opt.game, 'passwd'))
 	#svn.importSVN(opt.version, config.get('SVN', 'uri'))
 	#svn.commit(opt.version, config.get('SVN', 'uri'))
 	#svn.delete("D:\\svn\\repos\\WGMS20\\sacheonpang")
@@ -83,4 +73,4 @@ if __name__ == '__main__':
                       format='%(asctime)s [%(levelname)s]: %(message)s',
                       datefmt='%Y-%m-%d %H:%M:%S')
 	
-	main(opt, arg)
+	Main(opt, arg)
